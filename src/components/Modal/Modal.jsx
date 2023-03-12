@@ -21,6 +21,7 @@ export class Modal extends Component {
     }
 
   render() {
+    console.log(this.props.src);
     return (
         <Overlay onClick={this.closeModal}>
         <Modals>
