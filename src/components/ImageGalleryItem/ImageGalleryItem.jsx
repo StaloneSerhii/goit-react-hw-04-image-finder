@@ -6,20 +6,13 @@ import './itemGalery.css'
 export const ImaageaItems= ({largeImageURL,tags})=>{
   const [openModal, setOpenModal] = useState(false);
   const [src, setSrc] = useState('');
-  // state ={
-  //   openModal: false,
-  //   src: ''
-  // }
 
  const openModals =(e)=>  {
    setOpenModal(true);
-   console.log(openModal);
-   console.log(src);
    setSrc(e.target.src)
   }
   
  const closeModal =()=>  {
-console.log("closeModal");
    setOpenModal(false);
   }
 

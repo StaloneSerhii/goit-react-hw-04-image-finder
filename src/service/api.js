@@ -8,7 +8,7 @@ async function fetchData(q, page) {
     const resp = await axios.get(
         `${URL_BASA}?key=${key}&q=${q}&image_type=photo&orientation=horizontal&safesearch=true&per_page=12&page=${page}`
       );
-      return resp.data.hits;
+      return resp.data;
     } catch (error) {
         console.error(error);
     }

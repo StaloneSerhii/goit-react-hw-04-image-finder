@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import { Serchbar } from './Searchbar/Searchbar';
 import { fetchData } from 'service/api';
@@ -7,64 +7,50 @@ import { Btn } from './Button/Button';
 import { Loader } from './Loader/Loader';
 import { BasaStyled } from './add.styled';
 
-export class App extends Component {
-  state = {
-    card: [],
-    page: 1,
-    inputValue: null,
-    isLoad: false,
-    onShow: false,
-  };
+export const App = () => {
+  const [card, setCard] = useState([]);
+  const [page, setPage] = useState(1);
+  const [inputValue, setInputValue] = useState(null);
+  const [isLoad, setLoad] = useState(false);
+  const [onShow, setShow] = useState(false);
 
-  componentDidUpdate(prevStat, prevProp) {
-    if (
-      prevProp.page !== this.state.page ||
-      prevProp.inputValue !== this.state.inputValue
-    ) {
-      this.setState({ isLoad: true });
-      fetchData(this.state.inputValue, this.state.page)
-        .then(cards =>
-          this.setState(preve => ({
-            card: [...preve.card, ...cards],
-            onShow: cards.length === 12,
-            isLoad: false
-          }))
-        )
-        .catch(error => console.log(error))
-       
+  useEffect(() => {
+    if (!inputValue) {
+      return;
     }
-    console.log(this.state.isLoad);
-  }
+    setLoad(true);
+    fetchData(inputValue, page)
+      .then(({ hits, totalHits }) => {
+        {
+          setCard(prevState => [...prevState, ...hits]);
+          setLoad(false);
+          setShow(page < Math.ceil(totalHits / 12));
+        }
+      })
+      .catch(error => console.log(error));
+  }, [page, inputValue]);
 
-  FindPicteru = e => {
+  const FindPicteru = e => {
     if (e.serch === '') {
       alert('Enter a search name');
     } else {
-      this.setState({ page: 1 });
-      this.setState({ isLoad: true });
-      this.setState({ card: [] });
-      this.setState(prev => ({ inputValue: e.serch }));
-
-      // fetchData(e.serch, 1)
-      //   .then(cards => this.setState({ card: [...cards], isLoad: false }))
-      //   .catch(error => console.log(error));
+      setPage(1);
+      setLoad(true);
+      setCard([]);
+      setInputValue(e.serch);
     }
   };
 
-  addPages = () => {
-    this.setState(prevStat => ({ page: prevStat.page + 1 }));
+  const addPages = () => {
+    setPage(page + 1);
   };
 
-  render() {
-    return (
-      <BasaStyled>
-        <Serchbar onSubmit={this.FindPicteru} />
-        <GaleryImg img={this.state.card} />
-        {this.state.isLoad !== false && <Loader />}
-        {this.state.onShow === true && this.state.isLoad === false && (
-          <Btn addPages={this.addPages} />
-        )}
-      </BasaStyled>
-    );
-  }
-}
+  return (
+    <BasaStyled>
+      <Serchbar onSubmit={FindPicteru} />
+      <GaleryImg img={card} />
+      {isLoad !== false && <Loader />}
+      {onShow === true && isLoad === false && <Btn addPages={addPages} />}
+    </BasaStyled>
+  );
+};
