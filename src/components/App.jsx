@@ -19,15 +19,16 @@ export const App = () => {
       return;
     }
     setLoad(true);
+
     fetchData(inputValue, page)
-      .then(({ hits, totalHits }) => {
-        {
-          setCard(prevState => [...prevState, ...hits]);
+    .then(({ hits, totalHits }) => {
+     setCard(prevState => [...prevState, ...hits]);
           setLoad(false);
           setShow(page < Math.ceil(totalHits / 12));
-        }
+  
       })
       .catch(error => console.log(error));
+      
   }, [page, inputValue]);
 
   const FindPicteru = e => {
